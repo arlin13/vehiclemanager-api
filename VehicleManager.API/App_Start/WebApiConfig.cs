@@ -20,7 +20,7 @@ namespace VehicleManager.API
             );
 
             // enable cors
-            config.EnableCors(new EnableCorsAttribute("", "", ""));
+            config.EnableCors(new EnableCorsAttribute("*", "*", "*"));
 
             // camel case resolve
             config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
