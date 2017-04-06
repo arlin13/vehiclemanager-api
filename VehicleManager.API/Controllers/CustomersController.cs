@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using VehicleManager.API.Data;
@@ -18,9 +14,17 @@ namespace VehicleManager.API.Controllers
         private VehicleManagerDataContext db = new VehicleManagerDataContext();
 
         // GET: api/Customers
-        public IQueryable<Customer> GetCustomers()
+        public IHttpActionResult GetCustomers()
         {
-            return db.Customers;
+            var resultSet = db.Customers.Select(customer => new
+            {
+                customer.CustomerId,
+                customer.FirstName,
+                customer.LastName,
+                customer.Email,
+                customer.Phone
+            });
+            return Ok(resultSet);
         }
 
         // GET: api/Customers/5

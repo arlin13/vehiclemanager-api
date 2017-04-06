@@ -16,13 +16,14 @@ namespace VehicleManager.API.Controllers
         // GET: api/Vehicles
         public IHttpActionResult GetVehicles()
         {
-            var resultSet = db.Customers.Select(customer => new
+            var resultSet = db.Vehicles.Select(vehicle => new
             {
-                customer.CustomerId,
-                customer.FirstName,
-                customer.LastName,
-                customer.Email,
-                customer.Phone
+                vehicle.Make,
+                vehicle.Model,
+                vehicle.Year,
+                vehicle.Color,
+                vehicle.RetailPrice,
+                vehicle.VehicleType
             });
             return Ok(resultSet);
         }
