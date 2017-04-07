@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
@@ -24,7 +25,7 @@ namespace VehicleManager.API.Controllers
                 sale.SalePrice,
                 sale.InvoiceDate,
                 sale.PaymentReceivedDate,
-                VehicleName = sale.Vehicle.Year + " " + sale.Vehicle.Model,
+                VehicleName = sale.Vehicle.Year + " " + sale.Vehicle.Make + " " + sale.Vehicle.Model,
                 CustomerName = sale.Customer.FirstName + " " + sale.Customer.LastName
             });
             return Ok(resultSet);
@@ -40,7 +41,17 @@ namespace VehicleManager.API.Controllers
                 return NotFound();
             }
 
-            return Ok(sale);
+            return Ok(new
+            {
+                SaleId = sale.SaleId,
+                CustomerId = sale.CustomerId,
+                VehicleId = sale.VehicleId,
+                SalePrice = sale.SalePrice,
+                InvoiceDate = (DateTime)(sale.InvoiceDate),
+                PaymentReceivedDate = sale.PaymentReceivedDate,
+                VehicleName = sale.Vehicle.Year + " " + sale.Vehicle.Make + " " + sale.Vehicle.Model,
+                CustomerName = sale.Customer.FirstName + " " + sale.Customer.LastName
+            });
         }
 
         // PUT: api/Sales/5
@@ -106,7 +117,17 @@ namespace VehicleManager.API.Controllers
             db.Sales.Remove(sale);
             db.SaveChanges();
 
-            return Ok(sale);
+            return Ok(new
+            {
+                sale.SaleId,
+                sale.CustomerId,
+                sale.VehicleId,
+                sale.SalePrice,
+                sale.InvoiceDate,
+                sale.PaymentReceivedDate,
+                VehicleName = sale.Vehicle.Year + " " + sale.Vehicle.Make + " " + sale.Vehicle.Model,
+                CustomerName = sale.Customer.FirstName + " " + sale.Customer.LastName
+            });
         }
 
         protected override void Dispose(bool disposing)

@@ -32,6 +32,7 @@ namespace VehicleManager.API.Controllers
         public IHttpActionResult GetCustomer(int id)
         {
             Customer customer = db.Customers.Find(id);
+ 
             if (customer == null)
             {
                 return NotFound();
