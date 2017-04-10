@@ -1,4 +1,5 @@
 ﻿using System.Data.Entity;
+using VehicleManager.API.Migrations;
 using VehicleManager.API.Models;
 
 namespace VehicleManager.API.Data
@@ -9,10 +10,17 @@ namespace VehicleManager.API.Data
         public IDbSet<Customer> Customers { get; set; }
         public IDbSet<Sale> Sales { get; set; }
 
+        //public VehicleManagerDataContext()
+        //    : base("VehicleManager")
+        //{
+
+        //}
         public VehicleManagerDataContext()
             : base("VehicleManager")
         {
-
+            Database.SetInitializer(
+                new MigrateDatabaseToLatestVersion<VehicleManagerDataContext, Configuration>()
+            );
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

@@ -32,13 +32,19 @@ namespace VehicleManager.API.Controllers
         public IHttpActionResult GetCustomer(int id)
         {
             Customer customer = db.Customers.Find(id);
- 
             if (customer == null)
             {
                 return NotFound();
             }
 
-            return Ok(customer);
+            return Ok(new
+            {
+                customer.CustomerId,
+                customer.FirstName,
+                customer.LastName,
+                customer.Email,
+                customer.Phone
+            });
         }
 
         // PUT: api/Customers/5
@@ -48,14 +54,23 @@ namespace VehicleManager.API.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }
+            } 
 
             if (id != customer.CustomerId)
             {
                 return BadRequest();
             }
 
-            db.Entry(customer).State = EntityState.Modified;
+            // Grab the customer from the database
+            var dbCustomer = db.Customers.Find(id);
+
+            // Manually update each property
+            dbCustomer.Email = customer.Email;
+            dbCustomer.FirstName = customer.FirstName;
+            dbCustomer.LastName = customer.LastName;
+            dbCustomer.Phone = customer.Phone;
+
+            db.Entry(dbCustomer).State = EntityState.Modified;
 
             try
             {
@@ -88,7 +103,14 @@ namespace VehicleManager.API.Controllers
             db.Customers.Add(customer);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = customer.CustomerId }, customer);
+            return CreatedAtRoute("DefaultApi", new { id = customer.CustomerId }, new
+            {
+                customer.CustomerId,
+                customer.FirstName,
+                customer.LastName,
+                customer.Email,
+                customer.Phone
+            });
         }
 
         // DELETE: api/Customers/5
@@ -104,7 +126,14 @@ namespace VehicleManager.API.Controllers
             db.Customers.Remove(customer);
             db.SaveChanges();
 
-            return Ok(customer);
+            return Ok(new
+            {
+                customer.CustomerId,
+                customer.FirstName,
+                customer.LastName,
+                customer.Email,
+                customer.Phone
+            });
         }
 
         protected override void Dispose(bool disposing)

@@ -18,6 +18,7 @@ namespace VehicleManager.API.Controllers
         {
             var resultSet = db.Vehicles.Select(vehicle => new
             {
+                vehicle.VehicleId,
                 vehicle.Make,
                 vehicle.Model,
                 vehicle.Year,
@@ -38,7 +39,16 @@ namespace VehicleManager.API.Controllers
                 return NotFound();
             }
 
-            return Ok(vehicle);
+            return Ok(new
+            {
+                vehicle.VehicleId,
+                vehicle.Make,
+                vehicle.Model,
+                vehicle.Year,
+                vehicle.Color,
+                vehicle.RetailPrice,
+                vehicle.VehicleType
+            });
         }
 
         // PUT: api/Vehicles/5
@@ -55,7 +65,17 @@ namespace VehicleManager.API.Controllers
                 return BadRequest();
             }
 
-            db.Entry(vehicle).State = EntityState.Modified;
+            // Grab the sale from the database
+            var dbVehicle = db.Vehicles.Find(id);
+
+            // Manually update each property
+            dbVehicle.Color = vehicle.Color;
+            dbVehicle.Make = vehicle.Make;
+            dbVehicle.Model = vehicle.Model;
+            dbVehicle.RetailPrice = vehicle.RetailPrice;
+            dbVehicle.VehicleType = vehicle.VehicleType;
+
+            db.Entry(dbVehicle).State = EntityState.Modified;
 
             try
             {
@@ -88,7 +108,16 @@ namespace VehicleManager.API.Controllers
             db.Vehicles.Add(vehicle);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = vehicle.VehicleId }, vehicle);
+            return CreatedAtRoute("DefaultApi", new { id = vehicle.VehicleId }, new
+            {
+                vehicle.VehicleId,
+                vehicle.Make,
+                vehicle.Model,
+                vehicle.Year,
+                vehicle.Color,
+                vehicle.RetailPrice,
+                vehicle.VehicleType
+            });
         }
 
         // DELETE: api/Vehicles/5
@@ -104,7 +133,16 @@ namespace VehicleManager.API.Controllers
             db.Vehicles.Remove(vehicle);
             db.SaveChanges();
 
-            return Ok(vehicle);
+            return Ok(new
+            {
+                vehicle.VehicleId,
+                vehicle.Make,
+                vehicle.Model,
+                vehicle.Year,
+                vehicle.Color,
+                vehicle.RetailPrice,
+                vehicle.VehicleType
+            });
         }
 
         protected override void Dispose(bool disposing)

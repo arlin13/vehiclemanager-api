@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
@@ -47,10 +46,8 @@ namespace VehicleManager.API.Controllers
                 CustomerId = sale.CustomerId,
                 VehicleId = sale.VehicleId,
                 SalePrice = sale.SalePrice,
-                InvoiceDate = (DateTime)(sale.InvoiceDate),
-                PaymentReceivedDate = sale.PaymentReceivedDate,
-                VehicleName = sale.Vehicle.Year + " " + sale.Vehicle.Make + " " + sale.Vehicle.Model,
-                CustomerName = sale.Customer.FirstName + " " + sale.Customer.LastName
+                InvoiceDate = sale.InvoiceDate,
+                PaymentReceivedDate = sale.PaymentReceivedDate
             });
         }
 
@@ -68,7 +65,16 @@ namespace VehicleManager.API.Controllers
                 return BadRequest();
             }
 
-            db.Entry(sale).State = EntityState.Modified;
+            // Grab the sale from the database
+            var dbSale = db.Sales.Find(id);
+
+            // Manually update each property
+            dbSale.CustomerId = sale.CustomerId;
+            dbSale.VehicleId = sale.VehicleId;
+            dbSale.InvoiceDate = sale.InvoiceDate;
+            dbSale.PaymentReceivedDate = sale.PaymentReceivedDate;
+
+            db.Entry(dbSale).State = EntityState.Modified;
 
             try
             {
@@ -101,7 +107,17 @@ namespace VehicleManager.API.Controllers
             db.Sales.Add(sale);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = sale.SaleId }, sale);
+            return CreatedAtRoute("DefaultApi", new { id = sale.SaleId }, new
+            {
+                sale.SaleId,
+                sale.CustomerId,
+                sale.VehicleId,
+                sale.SalePrice,
+                sale.InvoiceDate,
+                sale.PaymentReceivedDate
+                //VehicleName = sale.Vehicle.Year + " " + sale.Vehicle.Make + " " + sale.Vehicle.Model,
+                //CustomerName = sale.Customer.FirstName + " " + sale.Customer.LastName
+            });
         }
 
         // DELETE: api/Sales/5
